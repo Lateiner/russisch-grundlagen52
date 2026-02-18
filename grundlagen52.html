@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russische Grammatik: Aktive Partizipien der Vergangenheit</title>
+    <!-- Polyfill für Drag & Drop auf Touch-Geräten -->
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f4f7f6;
+            --card: #ffffff;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+
+        .explanation {
+            background: #eef7ff;
+            padding: 20px;
+            border-left: 6px solid var(--secondary);
+            border-radius: 4px;
+            margin-bottom: 40px;
+        }
+
+        .task-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            background: #fff;
+            position: relative;
+        }
+
+        .task-header {
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: block;
+            font-size: 1.1em;
+            color: var(--primary);
+        }
+
+        /* Interaktive Elemente */
+        select, .drop-zone {
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            background: white;
+            font-size: 1em;
+            min-width: 160px;
+            transition: all 0.2s ease;
+            display: inline-block;
+            vertical-align: middle;
+            outline: none;
+        }
+
+        .drop-zone {
+            min-height: 25px;
+            text-align: center;
+            border-style: dashed;
+            cursor: pointer;
+            background: #fafafa;
+        }
+
+        /* Sofort-Feedback Farben */
+        .correct { 
+            background-color: #d4edda !important; 
+            border-color: var(--success) !important; 
+            color: #155724 !important;
+        }
+        .incorrect { 
+            background-color: #f8d7da !important; 
+            border-color: var(--error) !important; 
+            color: #721c24 !important;
+        }
+
+        /* Buttons */
+        .btn-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn-reset { background-color: #95a5a6; color: white; }
+        .btn-solution { background-color: var(--primary); color: white; }
+        button:hover { opacity: 0.9; }
+
+        /* Drag & Drop */
+        .drag-items {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .drag-item {
+            padding: 8px 15px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 4px;
+            cursor: move;
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .radio-group label {
+            display: block;
+            margin-bottom: 8px;
+            padding: 10px;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #f8f9fa;
+            transition: all 0.2s;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .btn-group { flex-direction: column; }
+            button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik: Sprachassistent</h1>
+    <h2>Aktive Partizipien der Vergangenheit</h2>
+    
+    <div class="explanation">
+        <p>Das aktive Partizip der Vergangenheit beschreibt eine Person oder Sache, die eine Handlung in der Vergangenheit selbst ausgeführt hat. Es kann von <strong>unvollendeten</strong> (НСВ) und <strong>vollendeten</strong> (СВ) Verben gebildet werden.</p>
+        <p><strong>Die Bildung:</strong></p>
+        <ul>
+            <li>Man nutzt den Stamm des Präteritums (Maskulinum, ohne -л).</li>
+            <li>Endung auf Vokal: Suffix <strong>-вш-</strong> + Adjektivendung (z. B. чита-ть → чита<strong>вш</strong>ий).</li>
+            <li>Endung auf Konsonant: Suffix <strong>-ш-</strong> + Adjektivendung (z. B. нес-ти → нёс → нёс<strong>ш</strong>ий).</li>
+            <li>Bei reflexiven Verben bleibt <strong>-ся</strong> immer am Ende erhalten (улыбаться → улыбавшийся).</li>
+        </ul>
+    </div>
+
+    <div id="exercise-container">
+        <!-- JS generiert hier die Aufgaben -->
+    </div>
+</div>
+
+<script>
+    const tasks = [
+        { id: 1, type: 'select', q: 'Wähle das richtige Suffix für: писать (Stamm: писа-)', options: ['-вш-', '-ш-'], ans: '-вш-' },
+        { id: 2, type: 'select', q: 'Wähle das richtige Suffix für: лезть (Stamm: лез-)', options: ['-вш-', '-ш-'], ans: '-ш-' },
+        { id: 3, type: 'select', q: '„Die Frau, die geholfen hat“: Женщина, помога...', options: ['вшая', 'вший', 'вшее'], ans: 'вшая' },
+        { id: 4, type: 'drag', q: 'Ordne die Partizipien den Verben zu:', items: ['видевший', 'купивший'], labels: ['видеть:', 'купить:'], ans: ['видевший', 'купивший'] },
+        { id: 5, type: 'radio', q: 'Das Partizip von „идти“ ist „идявший“.', options: ['Richtig', 'Falsch'], ans: 'Falsch' },
+        { id: 6, type: 'select', q: 'Plural: „Kinder, die gespielt haben“: Дети, игра...', options: ['вший', 'вшие', 'вшая'], ans: 'вшие' },
+        { id: 7, type: 'select', q: 'Reflexiv: „Er, der sich gefreut hat“: Он, радовав...', options: ['шийся', 'ший', 'шиеся'], ans: 'шийся' },
+        { id: 8, type: 'drag', q: 'Ordne die Formen zu:', items: ['шедший', 'нёсший'], labels: ['идти:', 'нести:'], ans: ['шедший', 'нёсший'] },
+        { id: 9, type: 'select', q: 'Vollendeter Aspekt: „Der Student, der geantwortet hat“: Студент, ответив...', options: ['ший', 'шая', 'шее'], ans: 'ший' },
+        { id: 10, type: 'select', q: 'Wähle das Suffix für: погибнуть (Stamm: погиб-)', options: ['-вш-', '-ш-'], ans: '-ш-' },
+        { id: 11, type: 'drag', q: 'Bilde den Satzanfang „Die schlafende Katze“:', items: ['Кошка,', 'спавшая'], labels: ['Subjekt:', 'Partizip:'], ans: ['Кошка,', 'спавшая'] },
+        { id: 12, type: 'select', q: 'Kasus (Akkusativ belebt): Я видел друга, живш...', options: ['его', 'ему', 'им'], ans: 'его' },
+        { id: 13, type: 'select', q: 'Bedeutung von „написавший“:', options: ['derjenige, der schreibt', 'derjenige, der geschrieben hat'], ans: 'derjenige, der geschrieben hat' },
+        { id: 14, type: 'select', q: 'Partizip von „петь“ (Stamm: пе-):', options: ['певший', 'педший'], ans: 'певший' },
+        { id: 15, type: 'select', q: 'Reflexiv (weiblich): Она, смеявш...', options: ['аяся', 'ая', 'иеся'], ans: 'аяся' },
+        { id: 16, type: 'radio', q: 'Können diese Partizipien von Verben im vollendeten Aspekt (СВ) gebildet werden?', options: ['Ja', 'Nein'], ans: 'Ja' },
+        { id: 17, type: 'drag', q: 'Aspekt-Paar zuordnen:', items: ['делавший', 'сделавший'], labels: ['machen (unv.):', 'machen (voll.):'], ans: ['делавший', 'сделавший'] },
+        { id: 18, type: 'select', q: '„Leute, die dort gelebt haben“: Люди, живш...', options: ['ие', 'ая', 'ий'], ans: 'ие' },
+        { id: 19, type: 'select', q: 'Partizip von „узнать“ (m):', options: ['узнавший', 'узнадший'], ans: 'узнавший' },
+        { id: 20, type: 'select', q: '„Das gewachsene Bäumchen“: Дерево, росш...', options: ['ее', 'ий', 'ая'], ans: 'ее' }
+    ];
+
+    function renderTasks() {
+        const container = document.getElementById('exercise-container');
+        tasks.forEach(t => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.id = `task-${t.id}`;
+            
+            let html = `<span class="task-header">${t.id}. ${t.q}</span>`;
+            
+            if (t.type === 'select') {
+                html += `<select id="input-${t.id}" onchange="checkTask(${t.id})" data-ans="${t.ans}">
+                            <option value="">--Wähle--</option>
+                            ${t.options.map(o => `<option value="${o}">${o}</option>`).join('')}
+                         </select>`;
+            } else if (t.type === 'drag') {
+                html += `<div class="drag-items">
+                            ${t.items.map((item, idx) => `<div class="drag-item" draggable="true" id="item-${t.id}-${idx}">${item}</div>`).join('')}
+                         </div>`;
+                t.labels.forEach((label, idx) => {
+                    html += `<div style="margin: 10px 0;">${label} <div class="drop-zone" id="input-${t.id}-${idx}" data-ans="${t.ans[idx]}"></div></div>`;
+                });
+            } else if (t.type === 'radio') {
+                html += `<div class="radio-group" id="input-${t.id}">
+                            ${t.options.map(o => `<label id="label-${t.id}-${o}"><input type="radio" name="radio-${t.id}" value="${o}" onchange="checkTask(${t.id})"> ${o}</label>`).join('')}
+                         </div>`;
+            }
+
+            html += `<div class="btn-group">
+                        <button class="btn-reset" onclick="resetTask(${t.id})">Zurücksetzen</button>
+                        <button class="btn-solution" onclick="showSolution(${t.id})">Lösung anzeigen</button>
+                     </div>`;
+            
+            card.innerHTML = html;
+            container.appendChild(card);
+        });
+    }
+
+    // Drag & Drop Handling
+    document.addEventListener('dragstart', e => { e.dataTransfer.setData('text', e.target.id); });
+    document.addEventListener('dragover', e => { e.preventDefault(); });
+    document.addEventListener('drop', e => {
+        e.preventDefault();
+        const zone = e.target.closest('.drop-zone');
+        if (zone) {
+            const data = e.dataTransfer.getData('text');
+            const draggedElement = document.getElementById(data);
+            zone.innerText = draggedElement.innerText;
+            const taskId = zone.id.split('-')[1];
+            checkTask(parseInt(taskId));
+        }
+    });
+
+    // Sofort-Check Logik
+    window.checkTask = function(id) {
+        const task = tasks.find(t => t.id === id);
+        if (task.type === 'select') {
+            const el = document.getElementById(`input-${id}`);
+            if (el.value === "") { el.className = ''; return; }
+            el.className = (el.value === task.ans) ? 'correct' : 'incorrect';
+        } else if (task.type === 'drag') {
+            task.ans.forEach((a, idx) => {
+                const el = document.getElementById(`input-${id}-${idx}`);
+                if (el.innerText.trim() === "") return;
+                el.className = 'drop-zone ' + (el.innerText.trim() === a ? 'correct' : 'incorrect');
+            });
+        } else if (task.type === 'radio') {
+            const group = document.getElementById(`input-${id}`);
+            const selected = group.querySelector('input:checked');
+            task.options.forEach(o => {
+                document.getElementById(`label-${id}-${o}`).className = '';
+            });
+            if (selected) {
+                const isCorrect = selected.value === task.ans;
+                document.getElementById(`label-${id}-${selected.value}`).className = isCorrect ? 'correct' : 'incorrect';
+            }
+        }
+    };
+
+    // Reset
+    window.resetTask = function(id) {
+        const task = tasks.find(t => t.id === id);
+        if (task.type === 'select') {
+            const el = document.getElementById(`input-${id}`);
+            el.value = ''; el.className = '';
+        } else if (task.type === 'drag') {
+            task.ans.forEach((a, idx) => {
+                const el = document.getElementById(`input-${id}-${idx}`);
+                el.innerText = ''; el.className = 'drop-zone';
+            });
+        } else if (task.type === 'radio') {
+            const group = document.getElementById(`input-${id}`);
+            group.querySelectorAll('input').forEach(i => i.checked = false);
+            task.options.forEach(o => document.getElementById(`label-${id}-${o}`).className = '');
+        }
+    };
+
+    // Lösung anzeigen (füllt das Feld direkt)
+    window.showSolution = function(id) {
+        const task = tasks.find(t => t.id === id);
+        if (task.type === 'select') {
+            const el = document.getElementById(`input-${id}`);
+            el.value = task.ans;
+            el.className = 'correct';
+        } else if (task.type === 'drag') {
+            task.ans.forEach((a, idx) => {
+                const el = document.getElementById(`input-${id}-${idx}`);
+                el.innerText = a;
+                el.className = 'drop-zone correct';
+            });
+        } else if (task.type === 'radio') {
+            task.options.forEach(o => {
+                const label = document.getElementById(`label-${id}-${o}`);
+                const input = label.querySelector('input');
+                if (o === task.ans) {
+                    input.checked = true;
+                    label.className = 'correct';
+                } else {
+                    label.className = '';
+                }
+            });
+        }
+    };
+
+    renderTasks();
+</script>
+
+</body>
+</html>
