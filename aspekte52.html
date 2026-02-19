@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch-Trainer: Aspekt-Wahl (SV vs. NSV)</title>
+    <!-- Polyfill für Touch-Geräte -->
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f4f7f6;
+            --card: #ffffff;
+            --text: #333;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 10px;
+            font-style: normal;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .explanation {
+            background: #eef7ff;
+            padding: 20px;
+            border-left: 6px solid var(--secondary);
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        .task-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            background: #fff;
+            transition: background 0.3s;
+        }
+
+        .situation {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .sentence-context {
+            display: block;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .options-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .option-btn {
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: all 0.2s;
+            font-style: normal;
+        }
+
+        .option-btn:hover {
+            border-color: var(--secondary);
+            background: #f0f8ff;
+        }
+
+        .option-btn.correct {
+            background-color: var(--success) !important;
+            border-color: var(--success) !important;
+            color: white !important;
+        }
+
+        .option-btn.incorrect {
+            background-color: var(--error) !important;
+            border-color: var(--error) !important;
+            color: white !important;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: opacity 0.2s;
+        }
+
+        .btn-reset { background-color: #95a5a6; color: white; }
+        .btn-solution { background-color: var(--primary); color: white; }
+        .control-btn:hover { opacity: 0.9; }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .options-group { flex-direction: column; }
+            .option-btn { width: 100%; }
+            .btn-group { flex-direction: column; }
+            .control-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Aspekt-Wahl im Partizip</h1>
+    <h2>Vollendet (СВ) vs. Unvollendet (НСВ)</h2>
+    
+    <div class="explanation">
+        <p>Wähle das passende Partizip basierend auf der beschriebenen Situation:</p>
+        <ul>
+            <li><strong>Unvollendeter Aspekt (НСВ):</strong> Fokus auf den Prozess, die Dauer oder eine wiederholte Handlung.</li>
+            <li><strong>Vollendeter Aspekt (СВ):</strong> Fokus auf das Ergebnis, die Einmaligkeit oder den Abschluss der Handlung.</li>
+        </ul>
+        <p>Anleitung: Klicke auf die richtige Form. Die Reihenfolge der Antworten wird bei jedem Laden neu gemischt.</p>
+    </div>
+
+    <div id="exercise-list">
+        <!-- JS generiert hier die Aufgaben -->
+    </div>
+</div>
+
+<script>
+    const taskData = [
+        { id: 1, situ: "Situation: Er hat das Buch zu Ende gelesen (Resultat).", context: "Студент, ... книгу, пошёл гулять.", opt: ["прочитавший", "читавший"], ans: "прочитавший" },
+        { id: 2, situ: "Situation: Er hat lange in dem Buch gelesen (Vorgang).", context: "Студент, долго ... книгу, устал.", opt: ["читавший", "прочитавший"], ans: "читавший" },
+        { id: 3, situ: "Situation: Er hat den Brief bereits fertig geschrieben.", context: "Человек, ... письмо, положил его в конверт.", opt: ["написавший", "писавший"], ans: "написавший" },
+        { id: 4, situ: "Situation: Er hat früher oft Briefe geschrieben (Gewohnheit).", context: "Человек, часто ... письма, теперь звонит по телефону.", opt: ["писавший", "написавший"], ans: "писавший" },
+        { id: 5, situ: "Situation: Sie hat das Abendessen fertig zubereitet.", context: "Мама, ... ужин, позвала нас к столу.", opt: ["приготовившая", "готовившая"], ans: "приготовившая" },
+        { id: 6, situ: "Situation: Sie war gerade dabei, das Essen vorzubereiten (Prozess).", context: "Мама, ... ужин на кухне, слушала радио.", opt: ["готовившая", "приготовившая"], ans: "готовившая" },
+        { id: 7, situ: "Situation: Er hat die Prüfung erfolgreich bestanden.", context: "Студент, ... экзамен на пять, был счастлив.", opt: ["сдавший", "сдававший"], ans: "сдавший" },
+        { id: 8, situ: "Situation: Er war gerade in der Prüfungssituation (Versuch/Vorgang).", context: "Студент, ... экзамен три часа, очень волновался.", opt: ["сдававший", "сдавший"], ans: "сдававший" },
+        { id: 9, situ: "Situation: Wir haben das Haus komplett fertig gebaut.", context: "Строители, ... дом за год, получили премию.", opt: ["построившие", "строившие"], ans: "построившие" },
+        { id: 10, situ: "Situation: Wir arbeiteten lange am Bau des Hauses (Dauer).", context: "Строители, долго ... этот дом, наконец закончили работу.", opt: ["строившие", "построившие"], ans: "строившие" },
+        { id: 11, situ: "Situation: Er hat das Fenster einmalig geöffnet (jetzt ist es offen).", context: "Мальчик, ... окно, вышел из комнаты.", opt: ["открывший", "открывавший"], ans: "открывший" },
+        { id: 12, situ: "Situation: Er hat das Fenster früher oft geöffnet (Wiederholung).", context: "Мальчик, часто ... это окно, знал, как оно скриpit.", opt: ["открывавший", "открывший"], ans: "открывавший" },
+        { id: 13, situ: "Situation: Sie hat das Lied zu Ende gesungen.", context: "Девушка, ... песню, поклонилась зрителям.", opt: ["спевшая", "певшая"], ans: "спевшая" },
+        { id: 14, situ: "Situation: Sie hat den ganzen Abend lang gesungen (Prozess).", context: "Девушка, ... весь вечер, немного охрипла.", opt: ["певшая", "спевшая"], ans: "певшая" },
+        { id: 15, situ: "Situation: Er hat die Wahrheit konkret ausgesprochen.", context: "Человек, ... правду, чувствовал облегчение.", opt: ["сказавший", "говоривший"], ans: "сказавший" },
+        { id: 16, situ: "Situation: Er hat lange über dieses Thema gesprochen (Vorgang).", context: "Человек, долго ... об этом, замолчал.", opt: ["говоривший", "сказавший"], ans: "говоривший" },
+        { id: 17, situ: "Situation: Er hat das Auto gekauft (Besitzwechsel vollzogen).", context: "Мужчина, ... машину, был доволен покупкой.", opt: ["купивший", "покупавший"], ans: "купивший" },
+        { id: 18, situ: "Situation: Er kaufte früher oft Autos (Wiederholung/Gewohnheit).", context: "Мужчина, часто ... машины, хорошо в них разбирался.", opt: ["покупавший", "купивший"], ans: "покупавший" },
+        { id: 19, situ: "Situation: Sie hat das schwierige Problem gelöst (Erfolg).", context: "Женщина, ... задачу, улыбнулась.", opt: ["решившая", "решавшая"], ans: "решившая" },
+        { id: 20, situ: "Situation: Sie arbeitete lange an der Lösung (Prozess).", context: "Женщина, долго ... эту задачу, наконец нашла ответ.", opt: ["решавшая", "решившая"], ans: "решавшая" }
+    ];
+
+    // Hilfsfunktion zum Mischen von Arrays
+    function shuffleArray(array) {
+        let currentIndex = array.length, randomIndex;
+        while (currentIndex != 0) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex--;
+            [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+        }
+        return array;
+    }
+
+    function renderTasks() {
+        const container = document.getElementById('exercise-list');
+        taskData.forEach(t => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.id = `task-${t.id}`;
+            
+            // Mische die Optionen für diese spezifische Karte
+            const shuffledOptions = shuffleArray([...t.opt]);
+            
+            card.innerHTML = `
+                <span class="situation">${t.situ}</span>
+                <span class="sentence-context">${t.context}</span>
+                <div class="options-group">
+                    ${shuffledOptions.map(o => `
+                        <button class="option-btn" onclick="checkAnswer(${t.id}, this, '${t.ans}')">${o}</button>
+                    `).join('')}
+                </div>
+                <div class="btn-group">
+                    <button class="control-btn btn-reset" onclick="resetTask(${t.id})">Zurücksetzen</button>
+                    <button class="control-btn btn-solution" onclick="showSolution(${t.id}, '${t.ans}')">Lösung anzeigen</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    window.checkAnswer = function(taskId, btn, correctAns) {
+        const card = document.getElementById(`task-${taskId}`);
+        const buttons = card.querySelectorAll('.option-btn');
+        
+        buttons.forEach(b => b.classList.remove('correct', 'incorrect'));
+        
+        if (btn.innerText === correctAns) {
+            btn.classList.add('correct');
+        } else {
+            btn.classList.add('incorrect');
+        }
+    }
+
+    window.resetTask = function(taskId) {
+        const card = document.getElementById(`task-${taskId}`);
+        const buttons = card.querySelectorAll('.option-btn');
+        buttons.forEach(b => b.classList.remove('correct', 'incorrect'));
+    }
+
+    window.showSolution = function(taskId, correctAns) {
+        const card = document.getElementById(`task-${taskId}`);
+        const buttons = card.querySelectorAll('.option-btn');
+        
+        buttons.forEach(b => {
+            b.classList.remove('incorrect');
+            if (b.innerText === correctAns) {
+                b.classList.add('correct');
+            } else {
+                b.classList.remove('correct');
+            }
+        });
+    }
+
+    // Initialisierung
+    renderTasks();
+</script>
+
+</body>
+</html>
