@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch-Trainer: Zeitstrahl-Zuordnung (Mixed)</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f4f7f6;
+            --card: #ffffff;
+            --text: #333;
+            --present: #9b59b6;
+            --past: #e67e22;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 10px;
+            font-style: normal;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1, h2 {
+            color: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
+            text-align: center;
+            font-style: normal;
+        }
+
+        .explanation {
+            background: #eef7ff;
+            padding: 20px;
+            border-left: 6px solid var(--secondary);
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        .task-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 40px;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .task-header {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .timeline-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sentence-box {
+            background: #f9f9f9;
+            border: 2px solid #eee;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s;
+        }
+
+        .sentence-text {
+            font-size: 1.15em;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .assignment-buttons {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .assign-btn {
+            flex: 1;
+            max-width: 150px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .btn-present:hover { border-color: var(--present); color: var(--present); }
+        .btn-past:hover { border-color: var(--past); color: var(--past); }
+
+        .correct-present { background-color: var(--present) !important; border-color: var(--present) !important; color: white !important; }
+        .correct-past { background-color: var(--past) !important; border-color: var(--past) !important; color: white !important; }
+        .incorrect { background-color: var(--error) !important; border-color: var(--error) !important; color: white !important; }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        button.control-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn-reset { background-color: #95a5a6; color: white; }
+        .btn-solution { background-color: var(--primary); color: white; }
+        button:hover { opacity: 0.9; }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .assignment-buttons { flex-direction: column; align-items: center; }
+            .assign-btn { max-width: 100%; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Zeitstrahl-Zuordnung</h1>
+    <h2>Gegenwart vs. Vergangenheit</h2>
+    
+    <div class="explanation">
+        <p>Achtung: Die Reihenfolge ist gemischt! Achte genau auf das Suffix:</p>
+        <ul>
+            <li>Suffixe mit <strong>-щ-</strong> (ющ, ящ...) &rarr; Gegenwart</li>
+            <li>Suffixe mit <strong>-вш-</strong> oder <strong>-ш-</strong> &rarr; Vergangenheit</li>
+        </ul>
+    </div>
+
+    <div id="tasks-container"></div>
+</div>
+
+<script>
+    // Daten mit expliziten Antworten für jeden Satz
+    const taskData = [
+        { id: 1, s1: "Студент, читающий книгу", a1: "Gegenwart", s2: "Студент, читавший книгу", a2: "Vergangenheit" },
+        { id: 2, s1: "Люди, жившие здесь", a1: "Vergangenheit", s2: "Люди, живущие здесь", a2: "Gegenwart" },
+        { id: 3, s1: "Девочка, игравшая в саду", a1: "Vergangenheit", s2: "Девочка, играющая в саду", a2: "Gegenwart" },
+        { id: 4, s1: "Врач, лечащий Ваню", a1: "Gegenwart", s2: "Врач, лечивший Ваню", a2: "Vergangenheit" },
+        { id: 5, s1: "Повар, готовивший обед", a1: "Vergangenheit", s2: "Повар, готовящий обед", a2: "Gegenwart" },
+        { id: 6, s1: "Друг, пишущий письмо", a1: "Gegenwart", s2: "Друг, писавший письмо", a2: "Vergangenheit" },
+        { id: 7, s1: "Строители, строившие дом", a1: "Vergangenheit", s2: "Строители, строящие дом", a2: "Gegenwart" },
+        { id: 8, s1: "Солнце, светящее ярко", a1: "Gegenwart", s2: "Солнце, светившее ярко", a2: "Vergangenheit" },
+        { id: 9, s1: "Студентка, отвечавшая урок", a1: "Vergangenheit", s2: "Студентка, отвечающая урок", a2: "Gegenwart" },
+        { id: 10, s1: "Мужчина, работающий там", a1: "Gegenwart", s2: "Мужчина, работавший там", a2: "Vergangenheit" },
+        { id: 11, s1: "Женщина, поющая песню", a1: "Gegenwart", s2: "Женщина, певшая песню", a2: "Vergangenheit" },
+        { id: 12, s1: "Дети, смеявшиеся громко", a1: "Vergangenheit", s2: "Дети, смеющиеся громко", a2: "Gegenwart" },
+        { id: 13, s1: "Мальчик, бегущий по улице", a1: "Gegenwart", s2: "Мальчик, бежавший по улице", a2: "Vergangenheit" },
+        { id: 14, s1: "Ученик, знавший ответ", a1: "Vergangenheit", s2: "Ученик, знающий ответ", a2: "Gegenwart" },
+        { id: 15, s1: "Спортсмен, идущий быстро", a1: "Gegenwart", s2: "Спортсмен, шедший быстро", a2: "Vergangenheit" },
+        { id: 16, s1: "Бабушка, сидевшая на лавке", a1: "Vergangenheit", s2: "Бабушка, сидящая на лавке", a2: "Gegenwart" },
+        { id: 17, s1: "Телефон, звонящий долго", a1: "Gegenwart", s2: "Телефон, звонивший долго", a2: "Vergangenheit" },
+        { id: 18, s1: "Окно, сиявшее на солнце", a1: "Vergangenheit", s2: "Окно, сияющее на солнце", a2: "Gegenwart" },
+        { id: 19, s1: "Ребёнок, спящий в кроватке", a1: "Gegenwart", s2: "Ребёнок, спавший в кроватке", a2: "Vergangenheit" },
+        { id: 20, s1: "Дерево, росшее у дома", a1: "Vergangenheit", s2: "Дерево, растущее у дома", a2: "Gegenwart" }
+    ];
+
+    function renderTasks() {
+        const container = document.getElementById('tasks-container');
+        taskData.forEach(task => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.id = `task-${task.id}`;
+            
+            card.innerHTML = `
+                <span class="task-header">Aufgabe ${task.id}</span>
+                <div class="timeline-container">
+                    <div class="sentence-box" id="task-${task.id}-s1">
+                        <span class="sentence-text">${task.s1}</span>
+                        <div class="assignment-buttons">
+                            <button class="assign-btn btn-present" onclick="checkAssign(${task.id}, 1, 'Gegenwart')">Gegenwart</button>
+                            <button class="assign-btn btn-past" onclick="checkAssign(${task.id}, 1, 'Vergangenheit')">Vergangenheit</button>
+                        </div>
+                    </div>
+                    <div class="sentence-box" id="task-${task.id}-s2">
+                        <span class="sentence-text">${task.s2}</span>
+                        <div class="assignment-buttons">
+                            <button class="assign-btn btn-present" onclick="checkAssign(${task.id}, 2, 'Gegenwart')">Gegenwart</button>
+                            <button class="assign-btn btn-past" onclick="checkAssign(${task.id}, 2, 'Vergangenheit')">Vergangenheit</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="control-btn btn-reset" onclick="resetTask(${task.id})">Reset</button>
+                    <button class="control-btn btn-solution" onclick="showSolution(${task.id})">Lösung</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    window.checkAssign = function(taskId, sentenceNum, choice) {
+        const task = taskData.find(t => t.id === taskId);
+        const correctAns = (sentenceNum === 1) ? task.a1 : task.a2;
+        const box = document.getElementById(`task-${taskId}-s${sentenceNum}`);
+        const btns = box.querySelectorAll('.assign-btn');
+
+        // Reset Styles für diese Box
+        btns.forEach(btn => {
+            btn.classList.remove('correct-present', 'correct-past', 'incorrect');
+        });
+
+        const clickedBtn = Array.from(btns).find(btn => btn.innerText === choice);
+
+        if (choice === correctAns) {
+            clickedBtn.classList.add(choice === 'Gegenwart' ? 'correct-present' : 'correct-past');
+        } else {
+            clickedBtn.classList.add('incorrect');
+        }
+    }
+
+    window.resetTask = function(taskId) {
+        const task = document.getElementById(`task-${taskId}`);
+        task.querySelectorAll('.assign-btn').forEach(btn => {
+            btn.classList.remove('correct-present', 'correct-past', 'incorrect');
+        });
+    }
+
+    window.showSolution = function(taskId) {
+        const task = taskData.find(t => t.id === taskId);
+        
+        // Lösung Satz 1
+        const box1 = document.getElementById(`task-${taskId}-s1`);
+        resetStylesInBox(box1);
+        const correctBtn1 = Array.from(box1.querySelectorAll('.assign-btn')).find(b => b.innerText === task.a1);
+        correctBtn1.classList.add(task.a1 === 'Gegenwart' ? 'correct-present' : 'correct-past');
+
+        // Lösung Satz 2
+        const box2 = document.getElementById(`task-${taskId}-s2`);
+        resetStylesInBox(box2);
+        const correctBtn2 = Array.from(box2.querySelectorAll('.assign-btn')).find(b => b.innerText === task.a2);
+        correctBtn2.classList.add(task.a2 === 'Gegenwart' ? 'correct-present' : 'correct-past');
+    }
+
+    function resetStylesInBox(box) {
+        box.querySelectorAll('.assign-btn').forEach(btn => {
+            btn.classList.remove('correct-present', 'correct-past', 'incorrect');
+        });
+    }
+
+    renderTasks();
+</script>
+
+</body>
+</html>
