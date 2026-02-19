@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch Grammatik: Kongruenz der Partizipien</title>
+    <!-- Polyfill für Touch-Geräte -->
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f4f7f6;
+            --card: #ffffff;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        h1, h2 {
+            color: var(--primary);
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .explanation {
+            background: #eef7ff;
+            padding: 20px;
+            border-left: 6px solid var(--secondary);
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        .task-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            background: #fff;
+            transition: background 0.3s;
+        }
+
+        .sentence {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        /* Drop-Down Styling */
+        select {
+            padding: 5px 10px;
+            font-size: 1em;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        /* Feedback-Farben */
+        .correct { 
+            background-color: #d4edda !important; 
+            border-color: var(--success) !important; 
+            color: #155724 !important;
+        }
+        .incorrect { 
+            background-color: #f8d7da !important; 
+            border-color: var(--error) !important; 
+            color: #721c24 !important;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn-reset { background-color: #95a5a6; color: white; }
+        .btn-solution { background-color: var(--primary); color: white; }
+        button:hover { opacity: 0.9; }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            .sentence { font-size: 1.1em; }
+            .btn-group { flex-direction: column; }
+            button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik</h1>
+    <h2>Endungs-Puzzle: Kongruenz der Partizipien</h2>
+    
+    <div class="explanation">
+        <p><strong>Regel:</strong> Das aktive Partizip der Vergangenheit verhält sich wie ein Adjektiv. Es muss in <strong>Genus</strong> (Geschlecht), <strong>Numerus</strong> (Anzahl) und <strong>Kasus</strong> (Fall) mit dem Nomen übereinstimmen, das es beschreibt.</p>
+        <p>Beispiel: <em>врач (m, Nom.) → лечивш<strong>ий</strong></em> | <em>врача (m, Gen.) → лечивш<strong>его</strong></em></p>
+    </div>
+
+    <div id="exercise-list">
+        <!-- JS generiert hier die Aufgaben -->
+    </div>
+</div>
+
+<script>
+    const tasks = [
+        { id: 1, text: "Это врач, лечивш-", suffix: " Ваню.", options: ["ий", "его", "ему", "им"], ans: "ий" },
+        { id: 2, text: "Здесь нет врача, лечивш-", suffix: " Ваню.", options: ["ий", "его", "ему", "им"], ans: "его" },
+        { id: 3, text: "Позвони врачу, лечивш-", suffix: " Ваню.", options: ["ему", "его", "ий", "им"], ans: "ему" },
+        { id: 4, text: "Мы встретили врача, лечивш-", suffix: " Ваню.", options: ["его", "ий", "им", "ему"], ans: "его" },
+        { id: 5, text: "Он говорил с врачом, лечивш-", suffix: " Ваню.", options: ["им", "его", "ий", "ем"], ans: "им" },
+        { id: 6, text: "Ты спрашиваешь о враче, лечивш-", suffix: " Ваню.", options: ["ем", "им", "его", "ий"], ans: "ем" },
+        { id: 7, text: "Это девочка, читавш-", suffix: " книгу.", options: ["ая", "ей", "ую", "уюся"], ans: "ая" },
+        { id: 8, text: "Я не вижу девочки, читавш-", suffix: " книгу.", options: ["ей", "ая", "ую", "уюся"], ans: "ей" },
+        { id: 9, text: "Дай яблоко девочке, читавш-", suffix: " книгу.", options: ["ей", "ая", "ую", "уюся"], ans: "ей" },
+        { id: 10, text: "Я вижу девочку, читавш-", suffix: " книгу.", options: ["ую", "ая", "ей", "уюся"], ans: "ую" },
+        { id: 11, text: "Студенты, изучавш-", suffix: " русский язык, сдали экзамен.", options: ["ие", "их", "им", "ими"], ans: "ие" },
+        { id: 12, text: "Группа студентов, изучавш-", suffix: " русский язык, приехала.", options: ["их", "ие", "им", "ими"], ans: "их" },
+        { id: 13, text: "Скажи студентам, изучавш-", suffix: " русский язык, о встрече.", options: ["им", "их", "ие", "ими"], ans: "им" },
+        { id: 14, text: "Я видел студентов, изучавш-", suffix: " русский язык.", options: ["их", "ие", "им", "ими"], ans: "их" },
+        { id: 15, text: "Встреча со студентами, изучавш-", suffix: " русский язык.", options: ["ими", "их", "им", "ие"], ans: "ими" },
+        { id: 16, text: "Мы думаем о студентах, изучавш-", suffix: " русский язык.", options: ["их", "ими", "им", "ие"], ans: "их" },
+        { id: 17, text: "Письмо, пришедш-", suffix: " утром, лежало на столе.", options: ["ее", "ий", "ая", "их"], ans: "ее" },
+        { id: 18, text: "Он гулял с мальчиком, росш-", suffix: " в этом дворе.", options: ["им", "ем", "его", "ий"], ans: "им" },
+        { id: 19, text: "Много людей, живш-", suffix: " здесь, уехали.", options: ["их", "ие", "им", "ими"], ans: "их" },
+        { id: 20, text: "Я знаю женщину, работавш-", suffix: " в школе.", options: ["ую", "ая", "ей", "уюся"], ans: "ую" }
+    ];
+
+    function renderTasks() {
+        const container = document.getElementById('exercise-list');
+        tasks.forEach(t => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.id = `task-${t.id}`;
+            
+            card.innerHTML = `
+                <div class="sentence">
+                    ${t.id}. ${t.text}
+                    <select id="select-${t.id}" onchange="checkAnswer(${t.id})" data-ans="${t.ans}">
+                        <option value="">-- ? --</option>
+                        ${t.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                    </select>
+                    ${t.suffix}
+                </div>
+                <div class="btn-group">
+                    <button class="btn-reset" onclick="resetTask(${t.id})">Zurücksetzen</button>
+                    <button class="btn-solution" onclick="showSolution(${t.id})">Lösung anzeigen</button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    window.checkAnswer = function(id) {
+        const select = document.getElementById(`select-${id}`);
+        const task = tasks.find(t => t.id === id);
+        
+        if (select.value === "") {
+            select.className = "";
+            return;
+        }
+
+        if (select.value === task.ans) {
+            select.className = "correct";
+        } else {
+            select.className = "incorrect";
+        }
+    };
+
+    window.resetTask = function(id) {
+        const select = document.getElementById(`select-${id}`);
+        select.value = "";
+        select.className = "";
+    };
+
+    window.showSolution = function(id) {
+        const select = document.getElementById(`select-${id}`);
+        const task = tasks.find(t => t.id === id);
+        select.value = task.ans;
+        select.className = "correct";
+    };
+
+    // Initialisierung
+    renderTasks();
+</script>
+
+</body>
+</html>
