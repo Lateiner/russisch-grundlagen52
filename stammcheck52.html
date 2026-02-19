@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch-Trainer: Partizip-Stamm-Check</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f0f4f8;
+            --card: #ffffff;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .instruction {
+            background: #e8f4fd;
+            padding: 15px;
+            border-left: 5px solid var(--secondary);
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .task-card {
+            background: #fff;
+            border: 1px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+
+        .verb-display {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .options-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .option-btn {
+            padding: 10px 20px;
+            font-size: 1.1em;
+            background: #fff;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 120px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .option-btn:hover {
+            border-color: var(--secondary);
+            background: #f9fbff;
+        }
+
+        /* Feedback-Klassen */
+        .option-btn.correct {
+            background-color: var(--success) !important;
+            border-color: var(--success) !important;
+            color: white !important;
+        }
+
+        .option-btn.incorrect {
+            background-color: var(--error) !important;
+            border-color: var(--error) !important;
+            color: white !important;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: opacity 0.2s;
+        }
+
+        .btn-reset { background-color: #95a5a6; color: white; }
+        .btn-solution { background-color: var(--primary); color: white; }
+        .action-btn:hover { opacity: 0.8; }
+
+        @media (max-width: 600px) {
+            .options-container { flex-direction: column; }
+            .option-btn { width: 100%; }
+            .container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Stamm-Check: Aktive Partizipien</h1>
+    
+    <div class="instruction">
+        <strong>Anleitung:</strong> Klicke auf den korrekten Stamm, der zur Bildung des aktiven Partizips der Vergangenheit benötigt wird. 
+        <br><small>Regel: Präteritum (maskulin) minus Endung <strong>-л</strong>. Achtung bei unregelmäßigen Verben!</small>
+    </div>
+
+    <div id="exercise-list">
+        <!-- Aufgaben werden hier via JavaScript eingefügt -->
+    </div>
+</div>
+
+<script>
+    const tasks = [
+        { id: 1, inf: "читать", options: ["чита-", "читат-", "читал-"], ans: "чита-" },
+        { id: 2, inf: "говорить", options: ["говор-", "говори-", "говорил-"], ans: "говори-" },
+        { id: 3, inf: "писать", options: ["писа-", "пиш-", "писал-"], ans: "писа-" },
+        { id: 4, inf: "делать", options: ["дела-", "делат-", "делал-"], ans: "дела-" },
+        { id: 5, inf: "строить", options: ["стро-", "строи-", "строит-"], ans: "строи-" },
+        { id: 6, inf: "смотреть", options: ["смотр-", "смотре-", "смотрел-"], ans: "смотре-" },
+        { id: 7, inf: "нести", options: ["нес-", "несл-", "нёс-"], ans: "нёс-" },
+        { id: 8, inf: "везти", options: ["вез-", "везл-", "вёз-"], ans: "вёз-" },
+        { id: 9, inf: "лезть", options: ["лез-", "лезл-", "лезт-"], ans: "лез-" },
+        { id: 10, inf: "расти", options: ["раст-", "рас-", "рос-"], ans: "рос-" },
+        { id: 11, inf: "идти", options: ["идя-", "ид-", "шед-"], ans: "шед-" },
+        { id: 12, inf: "прийти", options: ["прийд-", "пришед-", "приш-"], ans: "пришед-" },
+        { id: 13, inf: "уйти", options: ["уйд-", "ушед-", "уш-"], ans: "ушед-" },
+        { id: 14, inf: "умереть", options: ["умер-", "умере-", "умр-"], ans: "умер-" },
+        { id: 15, inf: "запереть", options: ["запер-", "запре-", "запир-"], ans: "запер-" },
+        { id: 16, inf: "беречь", options: ["берег-", "береч-", "берёг-"], ans: "берёг-" },
+        { id: 17, inf: "помочь", options: ["помоч-", "помог-", "помог-"], ans: "помог-" },
+        { id: 18, inf: "петь", options: ["пе-", "пел-", "пет-"], ans: "пе-" },
+        { id: 19, inf: "рисовать", options: ["рису-", "рисова-", "рисовал-"], ans: "рисова-" },
+        { id: 20, inf: "улыбаться", options: ["улыба-", "улыб-", "улыбай-"], ans: "улыба-" }
+    ];
+
+    function renderTasks() {
+        const list = document.getElementById('exercise-list');
+        tasks.forEach(t => {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.id = `task-${t.id}`;
+            
+            card.innerHTML = `
+                <span class="verb-display">${t.id}. Infinitiv: ${t.inf}</span>
+                <div class="options-container">
+                    ${t.options.map(opt => `
+                        <button class="option-btn" onclick="checkAnswer(${t.id}, this, '${t.ans}')">${opt}</button>
+                    `).join('')}
+                </div>
+                <div class="btn-group">
+                    <button class="action-btn btn-reset" onclick="resetTask(${t.id})">Zurücksetzen</button>
+                    <button class="action-btn btn-solution" onclick="showSolution(${t.id}, '${t.ans}')">Lösung anzeigen</button>
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    window.checkAnswer = function(taskId, btn, correctAns) {
+        const card = document.getElementById(`task-${taskId}`);
+        const buttons = card.querySelectorAll('.option-btn');
+        
+        // Alle Buttons der Karte zurücksetzen (nur eine Wahl pro Versuch visualisieren)
+        buttons.forEach(b => b.classList.remove('correct', 'incorrect'));
+        
+        if (btn.innerText === correctAns) {
+            btn.classList.add('correct');
+        } else {
+            btn.classList.add('incorrect');
+        }
+    }
+
+    window.resetTask = function(taskId) {
+        const card = document.getElementById(`task-${taskId}`);
+        const buttons = card.querySelectorAll('.option-btn');
+        buttons.forEach(b => b.classList.remove('correct', 'incorrect'));
+    }
+
+    window.showSolution = function(taskId, correctAns) {
+        const card = document.getElementById(`task-${taskId}`);
+        const buttons = card.querySelectorAll('.option-btn');
+        
+        buttons.forEach(b => {
+            b.classList.remove('incorrect');
+            if (b.innerText === correctAns) {
+                b.classList.add('correct');
+            } else {
+                b.classList.remove('correct');
+            }
+        });
+    }
+
+    // Initialisierung
+    renderTasks();
+</script>
+
+</body>
+</html>
